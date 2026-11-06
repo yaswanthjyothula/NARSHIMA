@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Studio & Analytics Dashboard</title>
+  <!-- Google Fonts: Roboto & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js for analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <!-- Header / Navbar -->
+  <header class="yt-header">
+    <div class="yt-header-start">
+      <button class="icon-btn" id="sidebarToggleBtn" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+      </button>
+
+      <div class="yt-logo" id="logoHomeBtn" title="YouTube Analytics Home">
+        <div class="yt-logo-badge">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="#ffffff">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+        <div class="yt-logo-title">
+          <span>YouTube</span>
+          <span style="font-weight:400; color:var(--yt-text-secondary); font-size:14px; margin-left:2px;">Studio</span>
+          <span class="yt-logo-tag">Data v1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Search Bar -->
+    <div class="yt-header-center">
+      <div class="yt-search-container">
+        <div class="yt-search-box">
+          <input type="text" id="searchInput" placeholder="Search across 3,951 videos, channels, or topics..." autocomplete="off">
+          <span class="yt-search-clear" id="searchClearBtn" title="Clear search">✕</span>
+        </div>
+        <button class="yt-search-btn" id="searchSubmitBtn" title="Search">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Header End Tools -->
+    <div class="yt-header-end">
+      <!-- Theme Switcher -->
+      <button class="icon-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+          <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+        </svg>
+      </button>
+
+      <!-- Export Data Button -->
+      <button class="yt-action-pill" id="exportCsvBtn" title="Export current filtered data to CSV">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+        </svg>
+        <span>Export</span>
+      </button>
+
+      <!-- User Profile Badge -->
+      <div class="yt-user-avatar" title="YouTube Studio Analyst Profile">YT</div>
+    </div>
+  </header>
+
+  <div class="yt-layout">
+    <!-- Sidebar -->
+    <aside class="yt-sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <button class="sidebar-item active" data-tab="tab-explore">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          <span>Explore Feed</span>
+        </button>
+
+        <button class="sidebar-item" data-tab="tab-trending">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M17.5 10.5c-.87-1.74-2.3-3.08-4.04-3.83.27 1.35-.11 2.76-.98 3.82-.99 1.21-1.48 2.77-1.48 4.51 0 3.31 2.69 6 6 6s6-2.69 6-6c0-2.48-1.52-4.63-3.69-5.5.02.33.19 1 .19 1zm-4.71-8.5C9.52 3.65 8 6.74 8 10.15c0 1.34.34 2.61.94 3.73-.78-.71-1.33-1.68-1.54-2.77C5.12 12.83 4 15.28 4 18c0 4.42 3.58 8 8 8s8-3.58 8-8c0-5.85-4.49-10.74-10-11.75z"/>
+          </svg>
+          <span>Trending 🔥</span>
+          <span class="sidebar-badge">Hot</span>
+        </button>
+
+        <button class="sidebar-item" data-tab="tab-analytics">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+          </svg>
+          <span>Studio Analytics</span>
+        </button>
+
+        <button class="sidebar-item" data-tab="tab-optimization">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/>
+          </svg>
+          <span>Creator Lab</span>
+        </button>
+
+        <button class="sidebar-item" data-tab="tab-channels">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          </svg>
+          <span>Top Channels</span>
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Explore Queries</div>
+        <button class="sidebar-item query-filter-btn" data-query="all">
+          <span style="font-size:16px;">🌐</span>
+          <span>All Queries</span>
+        </button>
+        <button class="sidebar-item query-filter-btn" data-query="news">
+          <span style="font-size:16px;">📰</span>
+          <span>News</span>
+          <span class="sidebar-badge">618</span>
+        </button>
+        <button class="sidebar-item query-filter-btn" data-query="technology">
+          <span style="font-size:16px;">💻</span>
+          <span>Technology</span>
+          <span class="sidebar-badge">593</span>
+        </button>
+        <button class="sidebar-item query-filter-btn" data-query="sports">
+          <span style="font-size:16px;">⚽</span>
+          <span>Sports</span>
+          <span class="sidebar-badge">526</span>
+        </button>
+        <button class="sidebar-item query-filter-btn" data-query="education">
+          <span style="font-size:16px;">🎓</span>
+          <span>Education</span>
+          <span class="sidebar-badge">525</span>
+        </button>
+        <button class="sidebar-item query-filter-btn" data-query="music">
+          <span style="font-size:16px;">🎵</span>
+          <span>Music</span>
+          <span class="sidebar-badge">502</span>
+        </button>
+        <button class="sidebar-item query-filter-btn" data-query="gaming">
+          <span style="font-size:16px;">🎮</span>
+          <span>Gaming</span>
+          <span class="sidebar-badge">482</span>
+        </button>
+        <button class="sidebar-item query-filter-btn" data-query="AI">
+          <span style="font-size:16px;">🤖</span>
+          <span>AI</span>
+          <span class="sidebar-badge">459</span>
+        </button>
+        <button class="sidebar-item query-filter-btn" data-query="movies">
+          <span style="font-size:16px;">🎬</span>
+          <span>Movies</span>
+          <span class="sidebar-badge">246</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="yt-main">
+      <!-- Chips Filter Bar -->
+      <div class="yt-chips-wrapper" id="chipsWrapper">
+        <button class="chip active" data-filter="all">All</button>
+        <button class="chip" data-filter="trending">Trending 🔥</button>
+        <button class="chip" data-filter="news">News 📰</button>
+        <button class="chip" data-filter="technology">Technology 💻</button>
+        <button class="chip" data-filter="AI">AI 🤖</button>
+        <button class="chip" data-filter="sports">Sports ⚽</button>
+        <button class="chip" data-filter="music">Music 🎵</button>
+        <button class="chip" data-filter="education">Education 🎓</button>
+        <button class="chip" data-filter="gaming">Gaming 🎮</button>
+        <button class="chip" data-filter="movies">Movies 🎬</button>
+        <button class="chip" data-filter="shorts">Shorts (&lt;60s) ⚡</button>
+        <button class="chip" data-filter="longform">Longform (&gt;20m) ⏳</button>
+        <button class="chip" data-filter="high_engagement">High Engagement (&gt;2%) ⭐</button>
+      </div>
+
+      <!-- Active Filters & Stats Bar -->
+      <div class="active-filters-bar">
+        <div class="active-tags-list" id="activeTagsList">
+          <!-- Dynamically inserted active tags -->
+        </div>
+        <div class="results-count-text" id="resultsCountText">Showing 3,951 videos</div>
+      </div>
+
+      <!-- Tab 1: Video Explore Feed -->
+      <section class="tab-view active" id="tab-explore">
+        <!-- KPI Metrics Grid -->
+        <div class="yt-kpi-grid">
+          <div class="yt-kpi-card" style="--card-accent: #ff0000;">
+            <div class="yt-kpi-header">
+              <span>Total Views</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </div>
+            <div class="yt-kpi-value" id="kpiTotalViews">--</div>
+            <div class="yt-kpi-subtitle positive"><span>●</span> <span id="kpiAvgViews">-- avg per video</span></div>
+          </div>
+
+          <div class="yt-kpi-card" style="--card-accent: #3ea6ff;">
+            <div class="yt-kpi-header">
+              <span>Total Likes</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+            </div>
+            <div class="yt-kpi-value" id="kpiTotalLikes">--</div>
+            <div class="yt-kpi-subtitle"><span>●</span> <span id="kpiLikeRatio">-- avg like ratio</span></div>
+          </div>
+
+          <div class="yt-kpi-card" style="--card-accent: #fbc02d;">
+            <div class="yt-kpi-header">
+              <span>Total Comments</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+            </div>
+            <div class="yt-kpi-value" id="kpiTotalComments">--</div>
+            <div class="yt-kpi-subtitle"><span>●</span> <span id="kpiAvgComments">-- comments/video</span></div>
+          </div>
+
+          <div class="yt-kpi-card" style="--card-accent: #2ba640;">
+            <div class="yt-kpi-header">
+              <span>Avg Duration</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            </div>
+            <div class="yt-kpi-value" id="kpiAvgDuration">--</div>
+            <div class="yt-kpi-subtitle"><span id="kpiShortsRatio">-- Shorts vs Longform</span></div>
+          </div>
+        </div>
+
+        <!-- View Controls & Sorters -->
+        <div class="yt-controls-bar">
+          <div class="controls-left">
+            <label for="sortBySelect" style="color:var(--yt-text-secondary); font-size:13px;">Sort by:</label>
+            <select class="yt-select" id="sortBySelect">
+              <option value="score_desc">Trending Score (Highest)</option>
+              <option value="views_desc">Most Viewed</option>
+              <option value="likes_desc">Most Liked</option>
+              <option value="comments_desc">Most Comments</option>
+              <option value="engagement_desc">Highest Engagement Rate (%)</option>
+              <option value="duration_desc">Longest Duration</option>
+              <option value="duration_asc">Shortest Duration</option>
+              <option value="sentiment_desc">Most Positive Title Sentiment</option>
+              <option value="newest">Published Date (Newest)</option>
+            </select>
+
+            <select class="yt-select" id="yearFilterSelect">
+              <option value="all">All Years</option>
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+            </select>
+          </div>
+
+          <div class="controls-right">
+            <div class="view-toggle-group">
+              <button class="view-toggle-btn active" id="viewGridBtn" title="YouTube Cards Grid View">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z"/></svg>
+                <span>Grid</span>
+              </button>
+              <button class="view-toggle-btn" id="viewTableBtn" title="Detailed Tabular Analytics View">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 3v18h18V3H3zm8 16H5v-4h6v4zm0-6H5V9h6v4zm0-6H5V5h6v2zm8 12h-6v-4h6v4zm0-6h-6V9h6v4zm0-6h-6V5h6v2z"/></svg>
+                <span>Table</span>
+              </button>
+            </div>
+
+            <select class="yt-select" id="pageSizeSelect">
+              <option value="24">24 per page</option>
+              <option value="48" selected>48 per page</option>
+              <option value="96">96 per page</option>
+              <option value="200">200 per page</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Video Cards Grid View -->
+        <div class="video-grid" id="videoGrid">
+          <!-- Dynamically populated video cards -->
+        </div>
+
+        <!-- Video Table View (Hidden by default) -->
+        <div class="table-container" id="videoTableContainer" style="display:none;">
+          <table class="yt-table">
+            <thead>
+              <tr>
+                <th>Thumbnail</th>
+                <th>Title</th>
+                <th>Channel</th>
+                <th>Query</th>
+                <th>Views</th>
+                <th>Likes</th>
+                <th>Comments</th>
+                <th>Eng. Rate</th>
+                <th>Duration</th>
+                <th>Trending</th>
+                <th>Published</th>
+              </tr>
+            </thead>
+            <tbody id="videoTableBody">
+              <!-- Dynamically populated table rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display:none;">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          <h3>No videos match your criteria</h3>
+          <p>Try clearing your search query or reset filters.</p>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-bar" id="paginationBar">
+          <div class="results-count-text" id="pageInfoText">Page 1 of 83</div>
+          <div class="pagination-controls" id="paginationControls">
+            <!-- Dynamically populated page buttons -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Trending & Viral Spotlight -->
+      <section class="tab-view" id="tab-trending">
+        <div class="analytics-section-title">
+          <span>🔥 YouTube Trending Radar & Viral Breakouts</span>
+        </div>
+        <p style="color:var(--yt-text-secondary); margin-bottom:20px;">
+          Videos in this section possess the highest trending score calculated via velocity, view-to-like ratio, and community engagement.
+        </p>
+        <div class="video-grid" id="trendingGrid">
+          <!-- Populated by trending algorithm -->
+        </div>
+      </section>
+
+      <!-- Tab 3: YouTube Studio Analytics -->
+      <section class="tab-view" id="tab-analytics">
+        <div class="analytics-section-title">
+          <span>📊 YouTube Studio Deep Analytics</span>
+        </div>
+
+        <div class="charts-grid">
+          <!-- Chart 1: Performance by Query -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Views & Likes by Query Topic</div>
+                <div class="chart-subtitle">Aggregate volume across AI, News, Tech, Gaming, Music, etc.</div>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chartQueryPerf"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Category Distribution -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Video Distribution by YouTube Category</div>
+                <div class="chart-subtitle">Official YouTube API category breakdown</div>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chartCategoryDist"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 3: Duration Bins vs Views -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Duration Strategy vs Average Views</div>
+                <div class="chart-subtitle">Shorts (&lt;60s), Quick (1-5m), Standard (5-20m), Long (&gt;20m)</div>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chartDurationPerf"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 4: Sentiment vs Engagement -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Title Sentiment vs Average Engagement Rate</div>
+                <div class="chart-subtitle">Correlation between positive, neutral, and negative wording</div>
+              </div>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chartSentimentEng"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 4: Creator Lab & Algorithmic Optimization -->
+      <section class="tab-view" id="tab-optimization">
+        <div class="analytics-section-title">
+          <span>💡 Creator Lab: Algorithmic Optimization & Publishing Insights</span>
+        </div>
+        <p style="color:var(--yt-text-secondary); margin-bottom:20px;">
+          Empirical data analysis on what drives higher views, retention, and interaction in this 3,951 video dataset.
+        </p>
+
+        <!-- Optimization Insights Grid -->
+        <div class="optimization-grid">
+          <!-- Insight 1: Capitalization Impact -->
+          <div class="opt-card">
+            <div class="opt-title">
+              <span>🔤 Title Capitalization (ALL CAPS Ratio)</span>
+            </div>
+            <div class="opt-desc">Does aggressive capitalization improve video views or hurt trust?</div>
+            <div id="optCapsContent">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Insight 2: Emoji Impact -->
+          <div class="opt-card">
+            <div class="opt-title">
+              <span>🔥 Emoji Usage in Titles</span>
+            </div>
+            <div class="opt-desc">Comparing titles without emojis vs 1-2 emojis vs 3+ emojis.</div>
+            <div id="optEmojiContent">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Insight 3: Punctuation Impact -->
+          <div class="opt-card">
+            <div class="opt-title">
+              <span>❓ Question Marks & Exclamations !</span>
+            </div>
+            <div class="opt-desc">Curiosity hooks and high urgency punctuation test results.</div>
+            <div id="optPunctContent">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 24x7 Publishing Time Heatmap -->
+        <div class="heatmap-container">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+              <div class="chart-title">Best Time to Publish: 24-Hour × 7-Day Heatmap</div>
+              <div class="chart-subtitle">Cell color intensity indicates higher average view count for videos uploaded at that day & hour UTC.</div>
+            </div>
+            <div style="font-size:12px; color:var(--yt-text-muted); display:flex; align-items:center; gap:8px;">
+              <span>Low Views</span>
+              <span style="display:inline-block; width:14px; height:14px; background:#1e293b; border-radius:3px;"></span>
+              <span style="display:inline-block; width:14px; height:14px; background:#1e40af; border-radius:3px;"></span>
+              <span style="display:inline-block; width:14px; height:14px; background:#dc2626; border-radius:3px;"></span>
+              <span style="display:inline-block; width:14px; height:14px; background:#f59e0b; border-radius:3px;"></span>
+              <span>Peak Viral</span>
+            </div>
+          </div>
+          <table class="heatmap-table" id="heatmapTable">
+            <!-- Heatmap rows rendered by JS -->
+          </table>
+        </div>
+      </section>
+
+      <!-- Tab 5: Top Channels Leaderboard -->
+      <section class="tab-view" id="tab-channels">
+        <div class="analytics-section-title">
+          <span>🏆 Top Channels & Creators Leaderboard</span>
+        </div>
+        <div style="margin-bottom:20px; display:flex; gap:12px; max-width:400px;">
+          <input type="text" id="channelSearchInput" class="yt-select" style="flex:1;" placeholder="Filter channels by name...">
+        </div>
+        <div class="channels-list" id="channelsList">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Video Watch & Detail Modal (YouTube Watch UI Preview) -->
+  <div class="yt-modal-backdrop" id="videoModalBackdrop">
+    <div class="yt-modal" id="videoModal">
+      <button class="modal-close-btn" id="modalCloseBtn" title="Close">✕</button>
+      <div class="modal-video-box" id="modalVideoBox">
+        <!-- iframe player or fallback preview -->
+      </div>
+      <div class="modal-body">
+        <div class="modal-title" id="modalTitle">Video Title</div>
+        <div class="modal-channel-row">
+          <div class="modal-channel-left">
+            <div class="channel-avatar" id="modalChannelAvatar">C</div>
+            <div>
+              <div style="font-weight:600; font-size:15px; display:flex; align-items:center; gap:4px;" id="modalChannelName">Channel Name</div>
+              <div style="font-size:12px; color:var(--yt-text-muted);" id="modalCategoryDate">Category • Date</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <a href="#" target="_blank" class="yt-action-pill" id="modalWatchOnYtBtn" style="text-decoration:none; background:var(--yt-red); border:none; color:#fff; font-weight:600;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <span>Watch on YouTube</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="modal-stats-grid">
+          <div class="modal-stat-card">
+            <div class="modal-stat-label">Views</div>
+            <div class="modal-stat-val" id="modalViews">--</div>
+          </div>
+          <div class="modal-stat-card">
+            <div class="modal-stat-label">Likes</div>
+            <div class="modal-stat-val" id="modalLikes">--</div>
+          </div>
+          <div class="modal-stat-card">
+            <div class="modal-stat-label">Comments</div>
+            <div class="modal-stat-val" id="modalComments">--</div>
+          </div>
+          <div class="modal-stat-card">
+            <div class="modal-stat-label">Engagement Ratio</div>
+            <div class="modal-stat-val" id="modalEngagement">--</div>
+          </div>
+          <div class="modal-stat-card">
+            <div class="modal-stat-label">Trending Score</div>
+            <div class="modal-stat-val" id="modalScore">--</div>
+          </div>
+          <div class="modal-stat-card">
+            <div class="modal-stat-label">Duration</div>
+            <div class="modal-stat-val" id="modalDuration">--</div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-weight:600; font-size:13px; margin-bottom:6px; color:var(--yt-text-secondary);">Description Preview:</div>
+          <div class="modal-desc-box" id="modalDescription">No description available.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Dataset and Application Logic -->
+  <script src="videos_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+
